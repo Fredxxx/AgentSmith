@@ -1,4 +1,4 @@
-function plotUIaxes(data, t, ax, plotInd, xFirst, xLast)
+function plotUIaxes(data, t, ax, plotInd, xSmart)
     cla(ax)
     legLab = ["DataCh1" "DataCh2" "DataCh3" "DataCh4" "Trigger" "VoltageApp"];
     for i = 1:length(plotInd)
@@ -15,5 +15,9 @@ function plotUIaxes(data, t, ax, plotInd, xFirst, xLast)
         %xlim(ax,[xFirst, xLast])
     end
     legend(ax, leg)
-    xlim(ax,[xFirst, xLast])
+    if xSmart(1) == 1
+        xlim(ax,[xSmart(2), xSmart(3)])
+    else
+        xlim(ax,[min(t), max(t)])
+    end
 end
