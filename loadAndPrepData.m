@@ -1,4 +1,4 @@
-function [data, t, xFirst, xLast] = loadAndPrepData(path)
+function [data, t, tUnit, xFirst, xLast] = loadAndPrepData(path)
     chNum = 6;                  % number of channels to be read
     tUnit = 1/50*10^-3;         % time per datapoint [s]
     dt = 0.01;                  % signal edge addon [s]
