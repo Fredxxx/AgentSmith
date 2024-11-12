@@ -59,13 +59,13 @@ ddSc = dd/max(max(dd,abs(min(dd))));
 intDatMeanSc = intDatMean/max(max(intDatMean,abs(min(intDatMean))));
 %% plot stuff
 close all
-% figure
-% plot(t, data(1,:)), hold on
-% plot(t, data(2,:)), hold on
-% plot(t, data(3,:)), hold on
-% plot(t, data(4,:))
-% legend('DataCh1', 'DataCh2', 'DataCh3', 'DataCh4')
-% xlim([xTrigMin, xTrigMax])
+figure
+plot(t, data(1,:)), hold on
+plot(t, data(2,:)), hold on
+plot(t, data(3,:)), hold on
+plot(t, data(4,:))
+legend('DataCh1', 'DataCh2', 'DataCh3', 'DataCh4')
+xlim([xTrigMin, xTrigMax])
 figure
 plot(t, data(6,:)), hold on
 plot(t, abs(dd*max(data(6,:)*250/3))), hold on
