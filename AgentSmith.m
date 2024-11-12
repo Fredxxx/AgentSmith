@@ -1,8 +1,6 @@
 clearvars
 close all
 %% start imageJ
-addpath('C:\FIJI\Fiji.app\scripts')
-javaaddpath 'C:\Program Files\MATLAB\R2024b\java\mij.jar'
 Miji;
 %% define stuff
 path = "C:\UlbrichFred\nEOdiag\matlab\TestData\test";      % data to load
