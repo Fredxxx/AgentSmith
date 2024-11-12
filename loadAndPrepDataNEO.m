@@ -5,6 +5,9 @@ function [data, t, tUnit, xFirst, xLast] = loadAndPrepDataNEO(path)
     %% load and rearange data
     fid = fopen(path, "rb");
     d = fread(fid, inf, "single");
+    d
+
+
     data(1,:) = d(1:chNum:end);
     data(2,:) = d(2:chNum:end);
     data(3,:) = d(3:chNum:end);
