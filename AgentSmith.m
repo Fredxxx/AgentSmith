@@ -25,38 +25,57 @@ end
 % scale Data 
 [dataSc] = scaleData(data);
 
-%
-figure;
+%%
+figDat = figure;
+ax2 = axes(figDat); % Get the axes handle
 plot(tDat, dataSc(2,:)); 
 hold on
 plot(tDat, dataSc(1,:)); 
 hold on
 plot(tDat, dataSc(3,:)); 
+hold on
+plot(tImg, zeros(1,length(tImg))); 
 xlabel('[s]')
 ylabel({'[nA]', '[100mV]'})
 frate = 1/meta.tUnit/1000;
 title([sprintf('sampling rate %.2f kHz, voltage range %.0e A \n', frate, meta.vRange) meta.acqDateStr])
-legend({'Data Ch', 'Trigger', 'Voltage'}, 'Location', 'best')
+legend({'Trigger', 'Data', 'Voltage', 'intensity'}, 'Location', 'best')
 hold off
-
+%%
+figDat = figure;
+ax2 = axes(figDat); % Get the axes handle
+plot(tDat, dataSc(2,:), tDat, dataSc(1,:), tDat, dataSc(3,:), tImg, zeros(1,length(tImg))); 
+xlabel('[s]')
+ylabel({'[nA]', '[100mV]'})
+frate = 1/meta.tUnit/1000;
+title([sprintf('sampling rate %.2f kHz, voltage range %.0e A \n', frate, meta.vRange) meta.acqDateStr])
+legend({'Trigger', 'Data', 'Voltage', 'intensity'}, 'Location', 'best')
+hold off
 
 %% load image
 pathImg = [paths.pathImg paths.img];
 rawImg = double(tiffreadVolume(pathImg));
 %%
-fig1 = figure;
+figImg = figure;
 imshow(rawImg(:,:,300), []);  % Adjusts the intensity scale to fit the data
 % Create a rectangular ROI
 roi = drawcircle('Label', 'ROI', 'Color', 'r');  % Create the ROI and label it 'ROI'
 
-fig2 = figure;
-ax2 = axes(fig2); % Get the axes handle
-plot(zeros(600)); % Placeholder empty image
-title(ax2, 'Extracted ROI Data');
+figDat = figure;
+ax2 = axes(figDat); % Get the axes handle
+plot(tDat, dataSc(2,:), tDat, dataSc(1,:), tDat, dataSc(3,:), tImg, zeros(1,length(tImg))); 
+xlabel('[s]')
+ylabel({'[nA]', '[100mV]'})
+frate = 1/meta.tUnit/1000;
+titleStr = [sprintf('sampling rate %.2f kHz, voltage range %.0e A \n', frate, meta.vRange) meta.acqDateStr];
+title(titleStr)
+legend({'Trigger', 'Data', 'Voltage', 'intensity'}, 'Location', 'best')
+hold off
 
-addlistener(roi, 'MovingROI', @(src, event) updatePosition(src, rawImg, ax2));
+addlistener(roi, 'MovingROI', @(src, event) updatePosition(src, rawImg, ax2, dataSc, tDat, tImg, titleStr));
 % Callback function to update the position
-function updatePosition(roi, img, ax2)
+function updatePosition(roi, img, ax2, dataSc, tDat, tImg, titleStr)
+    pause(0.1)
     % Get the position of the ROI (bounding box)
     position = roi.Position;  % [x_center, y_center, radius]
     x_center = round(position(1));  % X-coordinate of the center
@@ -71,9 +90,11 @@ function updatePosition(roi, img, ax2)
     roiData = img.*mask;  % Apply the mask to extract the data inside the circle
     intMax = squeeze(max(max(roiData(:,:,:))));
     intMean = squeeze(sum(sum(roiData(:,:,:))))/nnz(roiData(:,:,300));
+    intPlot = intMean/1000;
     figure(ax2.Parent);
-    plot(intMean);
-    title(ax2, 'Updated ROI Data');
+    plot(tDat, dataSc(2,:), tDat, dataSc(1,:), tDat, dataSc(3,:), tImg, intPlot);
+    title(ax2, titleStr)
+    legend(ax2, {'Trigger', 'Data', 'Voltage', 'intensity'}, 'Location', 'best')
 end
 
 intDat = squeeze(max(max(rawData1(1:16,1:16, :))));
