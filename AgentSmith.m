@@ -25,7 +25,7 @@ end
 % scale Data 
 [dataSc] = scaleData(data);
 
-%%
+%
 figure;
 plot(tDat, dataSc(2,:)); 
 hold on
@@ -38,6 +38,47 @@ frate = 1/meta.tUnit/1000;
 title([sprintf('sampling rate %.2f kHz, voltage range %.0e A \n', frate, meta.vRange) meta.acqDateStr])
 legend({'Data Ch', 'Trigger', 'Voltage'}, 'Location', 'best')
 hold off
+
+
+%% load image
+pathImg = [paths.pathImg paths.img];
+rawImg = double(tiffreadVolume(pathImg));
+%%
+fig1 = figure;
+imshow(rawImg(:,:,300), []);  % Adjusts the intensity scale to fit the data
+% Create a rectangular ROI
+roi = drawcircle('Label', 'ROI', 'Color', 'r');  % Create the ROI and label it 'ROI'
+
+fig2 = figure;
+ax2 = axes(fig2); % Get the axes handle
+plot(zeros(600)); % Placeholder empty image
+title(ax2, 'Extracted ROI Data');
+
+addlistener(roi, 'MovingROI', @(src, event) updatePosition(src, rawImg, ax2));
+% Callback function to update the position
+function updatePosition(roi, img, ax2)
+    % Get the position of the ROI (bounding box)
+    position = roi.Position;  % [x_center, y_center, radius]
+    x_center = round(position(1));  % X-coordinate of the center
+    y_center = round(position(2));  % Y-coordinate of the center
+    radius = roi.Radius;            % Radius of the circle
+
+    % Create a mask for the circular ROI
+    [x, y] = meshgrid(1:size(img(:,:,300), 2), 1:size(img(:,:,300), 1));  % Create a grid of coordinates
+    mask = (x - x_center).^2 + (y - y_center).^2 <= radius^2;  % Create circular mask
+
+    % Extract the data inside the circular ROI using the mask
+    roiData = img.*mask;  % Apply the mask to extract the data inside the circle
+    intMax = squeeze(max(max(roiData(:,:,:))));
+    intMean = squeeze(sum(sum(roiData(:,:,:))))/nnz(roiData(:,:,300));
+    figure(ax2.Parent);
+    plot(intMean);
+    title(ax2, 'Updated ROI Data');
+end
+
+intDat = squeeze(max(max(rawData1(1:16,1:16, :))));
+intDatMean = squeeze(mean(mean(rawData1(1:16,1:16, :))));
+
 
 %% start imageJ
 %Miji;
