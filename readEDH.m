@@ -20,5 +20,10 @@ function [meta] = readEDH(filename)
     activeCh = str2double(table2array(metaRaw(10,:)));
     meta.activeCh = activeCh(~isnan(activeCh));
     meta.numOfCh = length(meta.activeCh);
+    date = table2array(metaRaw(9,4));
+    time = table2array(metaRaw(9,5));
+    dati = [char(date) ' ' char(time)];
+    meta.acqDateStr = dati;
+    meta.acqDate = datetime(dati, 'InputFormat', 'MM/dd/yyyy HH:mm:ss.SSS');
     meta.metaRaw = metaRaw;
 end

@@ -25,7 +25,7 @@ end
 % scale Data 
 [dataSc] = scaleData(data);
 
-%
+%%
 figure;
 plot(tDat, dataSc(2,:)); 
 hold on
@@ -34,7 +34,8 @@ hold on
 plot(tDat, dataSc(3,:)); 
 xlabel('[s]')
 ylabel({'[nA]', '[100mV]'})
-% Legende hinzufügen
+frate = 1/meta.tUnit/1000;
+title([sprintf('sampling rate %.2f kHz, voltage range %.0e A \n', frate, meta.vRange) meta.acqDateStr])
 legend({'Data Ch', 'Trigger', 'Voltage'}, 'Location', 'best')
 hold off
 
